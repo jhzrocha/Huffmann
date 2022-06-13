@@ -7,11 +7,42 @@ struct ElementoLetraRepeticoes{
     ElementoLetraRepeticoes *prox = nullptr;
     ElementoLetraRepeticoes *esq = nullptr;
     ElementoLetraRepeticoes *dir = nullptr;
+    ElementoLetraRepeticoes *pai = nullptr;
 
 };
 
+struct tabelaLetras{
+    char letrasEncontradas[256];
+    bool codigoHuffmann[256][128];
+    int quantidadeLetras = 0;
+
+    void setNovaLetra(char letra, bool codigoHuffmanEncontrado[128]){
+        letrasEncontradas[quantidadeLetras] = letra;
+
+        for(int i = 0; i < 128 ; i++){
+            codigoHuffmann[quantidadeLetras][i] = codigoHuffmanEncontrado[i];
+        }
+        this->quantidadeLetras++;
+    }
+
+    void imprimeTabela(){
+        for(int i = 0; i <= quantidadeLetras; i++){
+            std::cout << letrasEncontradas[i] << "  -  ";
+            for(int j = 0; j < 128 ; j++){
+                   std::cout << codigoHuffmann[i][j];
+            }
+            std::cout << std::endl;
+        }
+    }
+};
+
+
 struct ListaEncadeadaSimples{
     ElementoLetraRepeticoes *inicio = nullptr;
+
+    bool enderecoLetrasEncontrada[256][128];
+    int quantidadeLetras = 0;
+
 
     ElementoLetraRepeticoes* getPtrFinalLista(){
         ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
@@ -114,8 +145,11 @@ struct ListaEncadeadaSimples{
             ElementoLetraRepeticoes *segundoElemento = primeiroElemento->prox;
             this->inicio = segundoElemento->prox;
 
+            primeiroElemento->pai = novoElemento;
+            segundoElemento->pai = novoElemento;
             novoElemento->esq = primeiroElemento;
             novoElemento->dir = segundoElemento;
+
             novoElemento->qtdRepeticoes = primeiroElemento->qtdRepeticoes + segundoElemento->qtdRepeticoes;
 
             this->adicionarElementoArvoreHuffmann(novoElemento);
@@ -152,7 +186,6 @@ struct ListaEncadeadaSimples{
 
     void adicionarElementoArvoreHuffmann(ElementoLetraRepeticoes *elemento){
         ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
-        ElementoLetraRepeticoes *novo = new ElementoLetraRepeticoes();
 
         nav = this->inicio;
 
@@ -177,9 +210,45 @@ struct ListaEncadeadaSimples{
         }
     }
 
-    void montarTabela(){
+    bool getCodigoLetra(ElementoLetraRepeticoes *elementoComLetra){
+        bool enderecoNavegadorTemp[128];
 
+        ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
+        ElementoLetraRepeticoes *nav2 = new ElementoLetraRepeticoes();
+        int contador = 0;
 
+        nav = elementoComLetra;
+        nav2 = elementoComLetra;
+
+        while(nav->pai != nullptr){
+            if(nav->esq = nav2){
+                enderecoNavegadorTemp[contador] = 0;
+            }
+            if(nav->dir = nav2){
+                enderecoNavegadorTemp[contador] = 1;
+            }
+            nav2 = nav;
+            nav = nav->pai;
+        }
+
+        bool temp[128];
+        int cont= 0;
+        for(int i = 128; i >= 0; i--){
+            if(enderecoNavegadorTemp[i]!= NULL){
+                temp[cont] = enderecoNavegadorTemp[i];
+                cont++;
+            }
+        }
+        return temp;
+    }
+
+    void imprime (ElementoLetraRepeticoes *h) {
+       if (h == NULL){
+        return;
+       }
+       std::cout << h->letra << std::endl;
+       imprime(h->esq);
+       imprime(h->dir);
     }
     char getPorPosicao(int posicao){
         ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();

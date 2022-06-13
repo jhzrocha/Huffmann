@@ -31,6 +31,8 @@ int main()
         listaCaracteres.imprimirLista();
         listaCaracteres.criarArvoreHuffmann();
         listaCaracteres.imprimirLista();
+
+        listaCaracteres.imprime(listaCaracteres.inicio);
         is.close();
 
         cout << listaCaracteres.getQuantidadeElementos();
