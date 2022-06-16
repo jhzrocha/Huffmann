@@ -3,7 +3,7 @@
 
 struct ElementoLetraRepeticoes{
     int qtdRepeticoes = 0;
-    char letra;
+    char letra = 0;
     ElementoLetraRepeticoes *prox = nullptr;
     ElementoLetraRepeticoes *esq = nullptr;
     ElementoLetraRepeticoes *dir = nullptr;
@@ -12,37 +12,47 @@ struct ElementoLetraRepeticoes{
 };
 
 struct tabelaLetras{
-    char letrasEncontradas[256];
-    bool codigoHuffmann[256][128];
+     char letrasEncontradas[256];
+    std::string codigoHuffmann[256];
     int quantidadeLetras = 0;
 
-    void setNovaLetra(char letra, bool codigoHuffmanEncontrado[128]){
+    void addLetra(char letra, std::string codigoHuffmanEncontrado){
         letrasEncontradas[quantidadeLetras] = letra;
-
-        for(int i = 0; i < 128 ; i++){
-            codigoHuffmann[quantidadeLetras][i] = codigoHuffmanEncontrado[i];
-        }
+        codigoHuffmann[quantidadeLetras] = codigoHuffmanEncontrado;
         this->quantidadeLetras++;
     }
 
     void imprimeTabela(){
-        for(int i = 0; i <= quantidadeLetras; i++){
+        std::cout << "____Tabela de Dados_____" << std::endl;
+        for(int i = 0; i <= quantidadeLetras-1; i++){
             std::cout << letrasEncontradas[i] << "  -  ";
-            for(int j = 0; j < 128 ; j++){
-                   std::cout << codigoHuffmann[i][j];
-            }
+            std::cout << codigoHuffmann[i];
             std::cout << std::endl;
+        }
+    }
+
+    std::string getCodigoByChar(char letra){
+        for(int i = 0; i < this->quantidadeLetras; i++){
+            if(letrasEncontradas[i] == letra){
+                return codigoHuffmann[i];
+            }
         }
     }
 };
 
 
+
 struct ListaEncadeadaSimples{
     ElementoLetraRepeticoes *inicio = nullptr;
 
-    bool enderecoLetrasEncontrada[256][128];
     int quantidadeLetras = 0;
+    char textoOriginalEmChar[1000];
 
+
+    void addLetraTextoOriginal(char letra){
+        textoOriginalEmChar[quantidadeLetras] = letra;
+        quantidadeLetras++;
+    }
 
     ElementoLetraRepeticoes* getPtrFinalLista(){
         ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
@@ -98,6 +108,29 @@ struct ListaEncadeadaSimples{
         return false;
     }
 
+    void popularTabelaCodigos(ElementoLetraRepeticoes* no,std::string codigo,tabelaLetras &tabela){
+        if(no != nullptr) {
+            if(no->dir == nullptr  && no->letra!= 0){
+                tabela.addLetra(no->letra,codigo);
+                std::cout <<no->letra<<" = "<<codigo<<std::endl;
+            } else {
+                popularTabelaCodigos(no->esq,codigo+"0",tabela);
+                popularTabelaCodigos(no->dir,codigo+"1",tabela);
+            }
+        }
+    }
+
+    std::string getTextoTransformado(tabelaLetras &tabela){
+
+        std::string textoTransformado = "";
+        int cont = 0;
+
+        while(cont < quantidadeLetras){
+            textoTransformado = textoTransformado + " "+ tabela.getCodigoByChar(textoOriginalEmChar[cont]);
+            cont++;
+        }
+        return textoTransformado;
+    }
 
     bool estaNaListaRepeticoes(int repeticoes){
         ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
