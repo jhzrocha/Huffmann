@@ -1,5 +1,5 @@
-#ifndef LISTAENCADEADASIMPLES_H_INCLUDED
-#define LISTAENCADEADASIMPLES_H_INCLUDED
+#ifndef ArvoreHuffmann_H_INCLUDED
+#define ArvoreHuffmann_H_INCLUDED
 
 struct ElementoLetraRepeticoes{
     int qtdRepeticoes = 0;
@@ -38,15 +38,22 @@ struct tabelaLetras{
             }
         }
     }
+    char getCharByCodigo(std::string codigo){
+         for(int i = 0; i < this->quantidadeLetras; i++){
+            if(codigoHuffmann[i] == codigo){
+                return letrasEncontradas[i];
+            }
+        }
+    }
 };
 
 
-
-struct ListaEncadeadaSimples{
+struct ArvoreHuffmann{
     ElementoLetraRepeticoes *inicio = nullptr;
-
     int quantidadeLetras = 0;
+    std::string textoEmCodigo[1000];
     char textoOriginalEmChar[1000];
+
 
 
     void addLetraTextoOriginal(char letra){
@@ -120,18 +127,23 @@ struct ListaEncadeadaSimples{
         }
     }
 
-    std::string getTextoTransformado(tabelaLetras &tabela){
-
-        std::string textoTransformado = "";
+    void transformarTexto(tabelaLetras &tabela){
         int cont = 0;
-
         while(cont < quantidadeLetras){
-            textoTransformado = textoTransformado + " "+ tabela.getCodigoByChar(textoOriginalEmChar[cont]);
+            textoEmCodigo[cont] =  tabela.getCodigoByChar(textoOriginalEmChar[cont]);
             cont++;
         }
-        return textoTransformado;
+
     }
 
+    void imprimirTextoTransformado(){
+        int cont = 0;
+        while(cont < quantidadeLetras){
+            std::cout << textoEmCodigo[cont] << " ";
+            cont++;
+        }
+
+    }
     bool estaNaListaRepeticoes(int repeticoes){
         ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
         nav = this->inicio;
@@ -243,38 +255,6 @@ struct ListaEncadeadaSimples{
         }
     }
 
-    bool getCodigoLetra(ElementoLetraRepeticoes *elementoComLetra){
-        bool enderecoNavegadorTemp[128];
-
-        ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
-        ElementoLetraRepeticoes *nav2 = new ElementoLetraRepeticoes();
-        int contador = 0;
-
-        nav = elementoComLetra;
-        nav2 = elementoComLetra;
-
-        while(nav->pai != nullptr){
-            if(nav->esq = nav2){
-                enderecoNavegadorTemp[contador] = 0;
-            }
-            if(nav->dir = nav2){
-                enderecoNavegadorTemp[contador] = 1;
-            }
-            nav2 = nav;
-            nav = nav->pai;
-        }
-
-        bool temp[128];
-        int cont= 0;
-        for(int i = 128; i >= 0; i--){
-            if(enderecoNavegadorTemp[i]!= NULL){
-                temp[cont] = enderecoNavegadorTemp[i];
-                cont++;
-            }
-        }
-        return temp;
-    }
-
     void imprime (ElementoLetraRepeticoes *h) {
        if (h == NULL){
         return;
@@ -283,24 +263,8 @@ struct ListaEncadeadaSimples{
        imprime(h->esq);
        imprime(h->dir);
     }
-    char getPorPosicao(int posicao){
-        ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
-        int maiorElemento = this->getQuantidadeElementos();
 
-        nav = this->inicio;
-        if (posicao > (maiorElemento - 1)){
-            std::cout << "Não é possível pegar nesta posição" << std::endl;
-        }else{
-            int contador = 0;
 
-            while (contador != posicao){
-                nav = nav->prox;
-                contador++;
-            }
-
-            return nav->letra;
-        }
-    }
     void removeInicio(){
         ElementoLetraRepeticoes * primeiroElemento;
         primeiroElemento = this->inicio;
@@ -308,41 +272,7 @@ struct ListaEncadeadaSimples{
 
         delete primeiroElemento;
     }
-    void removeFim(){
-        ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
-        nav = this->inicio;
-        while(nav != nullptr){
-            if(nav->prox->prox == nullptr ){
-                ElementoLetraRepeticoes * ultimoElemento;
-                ultimoElemento = nav->prox;
-                nav->prox = nullptr;
-                delete ultimoElemento;
-                break;
-            }
-            nav = nav->prox;
-       }
-    }
-    void removePosicao(int posicao){
-        ElementoLetraRepeticoes *nav,*anterior = new ElementoLetraRepeticoes();
-        int maiorElemento = this->getQuantidadeElementos();
-        nav = this->inicio;
-        if (posicao > (maiorElemento - 1)){
-            std::cout << "Não é possível remover nesta posição" << std::endl;
-        }else{
-            int contador = 0;
-            ElementoLetraRepeticoes *elementoDeletado;
-            while (contador != posicao){
-                if(contador + 1 == posicao){
-                    anterior = nav;
-                    elementoDeletado = nav;
-                }
-                contador++;
-                nav = nav->prox;
-            }
-            delete elementoDeletado;
-            anterior->prox = nav->prox;
-        }
-    }
+
     void imprimirLista(){
         ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
         nav = this->inicio;
@@ -353,4 +283,4 @@ struct ListaEncadeadaSimples{
        }
     }
 };
-#endif // LISTAENCADEADASIMPLES_H_INCLUDED
+#endif // ArvoreHuffmann_H_INCLUDED

@@ -5,7 +5,7 @@ using namespace std;
 
 int main()
 {
-        ListaEncadeadaSimples listaCaracteres;
+        ArvoreHuffmann listaCaracteres;
         tabelaLetras tabela;
 
         //Leitura do documento
@@ -42,7 +42,8 @@ int main()
         is.close();
 
 
-        cout << listaCaracteres.getTextoTransformado(tabela) <<endl;
+        listaCaracteres.transformarTexto(tabela);
+        listaCaracteres.imprimirTextoTransformado();
 
     return 0;
 }
