@@ -177,7 +177,7 @@ struct Decodificador{
          ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
          std::string textoTransformado = "";
          nav = inicio;
-         for(int i = 0; i < quantidadeCharTextoCodificado; i++){
+         for(int i = 0; i < quantidadeCharTextoCodificado + 1; i++){
             if(nav->letra != 0){
                 textoTransformado = textoTransformado + nav->letra;
                 nav = inicio;
@@ -191,7 +191,6 @@ struct Decodificador{
                 nav = nav->esq;
             }
          }
-
          return textoTransformado;
 
     }
