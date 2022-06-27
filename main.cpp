@@ -32,6 +32,8 @@ int main()
                 as.close();
             }
         }
+
+
         listaCaracteres.imprimirLista();
         listaCaracteres.criarArvoreHuffmann();
         listaCaracteres.imprimirLista();
@@ -44,6 +46,48 @@ int main()
 
         listaCaracteres.transformarTexto(tabela);
         listaCaracteres.imprimirTextoTransformado();
+
+        ofstream out("TextoTransformado.txt");
+        out << listaCaracteres.getArquivoTransformadoEmString();
+        out.close();
+
+        ofstream tabelaOut("Tabela.txt");
+        tabelaOut << tabela.tabelaStringParaTXT();
+        tabelaOut.close();
+
+
+        cout << endl<<"*****************DECODIFICAcaO*****************" << endl;
+        Decodificador decodificador;
+        ifstream tab("Tabela.txt");
+
+        while (tab.get(caractere)){
+            char letraAnalisada;
+            if(caractere != '0' && caractere != '1' && caractere != NULL){
+                letraAnalisada = caractere;
+            }
+            if(caractere !=0 && letraAnalisada!=0 && letraAnalisada!= caractere){
+                cout <<"Caractere:" <<caractere << "," << "Letra:" <<letraAnalisada << endl;
+                decodificador.popularTabelas(letraAnalisada,caractere);
+            }
+        }
+        tab.close();
+
+        decodificador.imprimirTabela();
+        decodificador.criarArvoreHuffmann();
+        decodificador.imprimeArvore(decodificador.inicio);
+
+        ifstream txtTransformado("TextoTransformado.txt");
+
+        while (txtTransformado.get(caractere)){
+            decodificador.inTextoCodificado(caractere);
+        }
+
+        txtTransformado.close();
+
+
+        cout << "Texto Decodificado:";
+        cout << decodificador.decodificarPelaArvore();
+
 
     return 0;
 }

@@ -1,13 +1,13 @@
 #ifndef ArvoreHuffmann_H_INCLUDED
 #define ArvoreHuffmann_H_INCLUDED
-
+#include <iostream>
+#include <fstream>
 struct ElementoLetraRepeticoes{
     int qtdRepeticoes = 0;
     char letra = 0;
     ElementoLetraRepeticoes *prox = nullptr;
     ElementoLetraRepeticoes *esq = nullptr;
     ElementoLetraRepeticoes *dir = nullptr;
-    ElementoLetraRepeticoes *pai = nullptr;
 
 };
 
@@ -45,9 +45,158 @@ struct tabelaLetras{
             }
         }
     }
+
+    std::string tabelaStringParaTXT(){
+        std::string texto = "";
+         for(int i = 0; i <= quantidadeLetras-1; i++){
+            texto = texto + letrasEncontradas[i] + codigoHuffmann[i];
+        }
+        return texto;
+    }
 };
 
+struct Decodificador{
+    char tabelaCodigoHuffmann [256][128];
+    char tabelaLetra[256];
+    char textoCodificado[10000];
 
+    int quantidadeLetras = 0;
+    int quantidadeCodigosPorLetra[256];
+    int quantidadeCharTextoCodificado = 0;
+
+
+    ElementoLetraRepeticoes *inicio;
+
+    void decodificar(tabelaLetras *tabela){}
+
+    void iniciarTabela(){
+        for(int i = 0; i < 256; i++){
+            quantidadeCodigosPorLetra[i] = 0;
+        }
+    }
+
+    bool letraEstaNaLista(char letra){
+        for (int i = 0; i < 256; i++){
+            if(tabelaLetra[i] == letra){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
+    void popularTabelas(char letra, char codigo){
+        addLetra(letra);
+        addCodigo(letra,codigo);
+    }
+
+    void addCodigo(char letra ,char codigo){
+        int posicao = getPosicaoLetra(letra);
+        int posicaoCodigo = quantidadeCodigosPorLetra[posicao];
+        tabelaCodigoHuffmann[posicao][posicaoCodigo] = codigo;
+        quantidadeCodigosPorLetra[posicao]= quantidadeCodigosPorLetra[posicao] + 1;
+    }
+
+    void addLetra(char letra){
+        bool isOnTheList = false;
+
+        for(int i = 0; i < 256; i++){
+            if(tabelaLetra[i] == letra){
+                isOnTheList = true;
+            }
+        }
+        if(!isOnTheList){
+            tabelaLetra[quantidadeLetras] = letra;
+            quantidadeLetras++;
+        }
+    }
+
+    void inTextoCodificado(char caractere){
+        textoCodificado[quantidadeCharTextoCodificado] = caractere;
+        quantidadeCharTextoCodificado++;
+    }
+
+    void imprimirTabela(){
+        for(int i = 0; i < quantidadeLetras; i++){
+            std::cout <<"Letra:"<< tabelaLetra[i] << "Codigo:";
+            for(int j = 0; j < 128; j++){
+                std::cout << tabelaCodigoHuffmann [i][j] ;
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    int getPosicaoLetra(char letra){
+        int posicao = -1;
+        for(int i = 0; i < 256; i++){
+            if(tabelaLetra[i] == letra){
+                posicao = i;
+            }
+        }
+        return posicao;
+    }
+
+    void criarArvoreHuffmann(){
+        ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
+        this->inicio = nav;
+
+        for(int i = 0; i < quantidadeLetras ; i++){
+            nav = inicio;
+            for(int j = 0; j < quantidadeCodigosPorLetra[i] ; j++){
+               if(tabelaCodigoHuffmann[i][j] == '0' && nav->esq == nullptr){
+                    ElementoLetraRepeticoes *novo = new ElementoLetraRepeticoes();
+                    nav->esq = novo;
+                    nav = nav->esq;
+               }
+               if((tabelaCodigoHuffmann[i][j] == '0' && nav->esq != nullptr)){
+                    nav = nav->esq;
+               }
+
+               if(tabelaCodigoHuffmann[i][j] == '1'&& nav->dir == nullptr){
+                    ElementoLetraRepeticoes *novo = new ElementoLetraRepeticoes();
+                     nav->dir = novo;
+                     nav = nav->dir;
+               }
+               if((tabelaCodigoHuffmann[i][j] == '1' && nav->dir != nullptr)){
+                    nav = nav->dir;
+               }
+            }
+            nav->letra = tabelaLetra[i];
+        }
+    }
+    void imprimeArvore (ElementoLetraRepeticoes *no) {
+       if (no == NULL){
+        return;
+       }
+       std::cout << no->letra << std::endl;
+       imprimeArvore(no->esq);
+       imprimeArvore(no->dir);
+    }
+
+    std::string decodificarPelaArvore(){
+         ElementoLetraRepeticoes *nav = new ElementoLetraRepeticoes();
+         std::string textoTransformado = "";
+         nav = inicio;
+         for(int i = 0; i < quantidadeCharTextoCodificado; i++){
+            if(nav->letra != 0){
+                textoTransformado = textoTransformado + nav->letra;
+                nav = inicio;
+            }
+
+            if(textoCodificado[i] == '1'){
+                nav = nav->dir;
+            }
+
+            if(textoCodificado[i] == '0'){
+                nav = nav->esq;
+            }
+         }
+
+         return textoTransformado;
+
+    }
+
+};
 struct ArvoreHuffmann{
     ElementoLetraRepeticoes *inicio = nullptr;
     int quantidadeLetras = 0;
@@ -190,8 +339,6 @@ struct ArvoreHuffmann{
             ElementoLetraRepeticoes *segundoElemento = primeiroElemento->prox;
             this->inicio = segundoElemento->prox;
 
-            primeiroElemento->pai = novoElemento;
-            segundoElemento->pai = novoElemento;
             novoElemento->esq = primeiroElemento;
             novoElemento->dir = segundoElemento;
 
@@ -281,6 +428,14 @@ struct ArvoreHuffmann{
             std::cout << nav->letra <<"   "<<nav->qtdRepeticoes << std::endl;
             nav = nav->prox;
        }
+    }
+
+    std::string getArquivoTransformadoEmString(){
+        std::string textoTransformado = "";
+        for(int i = 0; i < 1000; i++){
+            textoTransformado = textoTransformado + textoEmCodigo[i];
+        }
+        return textoTransformado;
     }
 };
 #endif // ArvoreHuffmann_H_INCLUDED
