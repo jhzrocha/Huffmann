@@ -118,7 +118,7 @@ struct Decodificador{
 
     void imprimirTabela(){
         for(int i = 0; i < quantidadeLetras; i++){
-            std::cout <<"Letra:"<< tabelaLetra[i] << "Codigo:";
+            std::cout <<"Letra: "<< tabelaLetra[i] << " Codigo:";
             for(int j = 0; j < 128; j++){
                 std::cout << tabelaCodigoHuffmann [i][j] ;
             }
@@ -267,7 +267,6 @@ struct ArvoreHuffmann{
         if(no != nullptr) {
             if(no->dir == nullptr  && no->letra!= 0){
                 tabela.addLetra(no->letra,codigo);
-                std::cout <<no->letra<<" = "<<codigo<<std::endl;
             } else {
                 popularTabelaCodigos(no->esq,codigo+"0",tabela);
                 popularTabelaCodigos(no->dir,codigo+"1",tabela);
